@@ -1,0 +1,263 @@
+_schema-version: '3.1'
+ID: custloyal_vs
+version: 1.0.0
+description: A simple CAP project.
+parameters:
+  deploy_mode: html5-repo
+  enable-parallel-deployments: true
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - rm -rf build/dist
+        - mkdir -p build/dist
+        - rm -rf build/ui-deployer
+        - mkdir -p build/ui-deployer
+    - builder: custom
+      commands:
+        - npm install --production
+        - >-
+          bash -c "cds -v | grep 'cds-dk' || npm i --production --no-save
+          @sap/cds-dk @sap/mdk-tools"
+        - bash -c "export PATH=$PATH:$(pwd)/node_modules/.bin"
+        - cds build --production
+  after-all:
+    - builder: custom
+      commands:
+        - npm install
+modules:
+  - name: custloyal_vs-custloyalvs.Customers
+    type: html5
+    path: app/custloyal_vs.Customers
+    build-parameters:
+      builder: custom
+      commands:
+        - rm -rf dist-zip dist
+        - >-
+          npx -p @ui5/cli@^3.0.0 ui5 build --dest dist
+          --include-task=generateManifestBundle
+          --include-task=generateCachebusterInfo
+        - mkdir dist-zip
+        - >-
+          bash -c "cd dist && npx bestzip ../dist-zip/custloyalvsCustomers.zip
+          *"
+      _artifactName: custloyalvsCustomers.zip
+      supported-platforms: []
+      build-result: dist-zip
+  - name: custloyal_vs-custloyalvs.Purchases
+    type: html5
+    path: app/custloyal_vs.Purchases
+    build-parameters:
+      builder: custom
+      commands:
+        - rm -rf dist-zip dist
+        - >-
+          npx -p @ui5/cli@^3.0.0 ui5 build --dest dist
+          --include-task=generateManifestBundle
+          --include-task=generateCachebusterInfo
+        - mkdir dist-zip
+        - >-
+          bash -c "cd dist && npx bestzip ../dist-zip/custloyalvsPurchases.zip
+          *"
+      _artifactName: custloyalvsPurchases.zip
+      supported-platforms: []
+      build-result: dist-zip
+  - name: custloyal_vs-custloyalvs.Redemptions
+    type: html5
+    path: app/custloyal_vs.Redemptions
+    build-parameters:
+      builder: custom
+      commands:
+        - rm -rf dist-zip dist
+        - >-
+          npx -p @ui5/cli@^3.0.0 ui5 build --dest dist
+          --include-task=generateManifestBundle
+          --include-task=generateCachebusterInfo
+        - mkdir dist-zip
+        - >-
+          bash -c "cd dist && npx bestzip ../dist-zip/custloyalvsRedemptions.zip
+          *"
+      _artifactName: custloyalvsRedemptions.zip
+      supported-platforms: []
+      build-result: dist-zip
+  - name: custloyal_vs-db-deployer
+    type: hdb
+    path: gen/db
+    parameters:
+      buildpack: nodejs_buildpack
+    build-parameters:
+      builder: npm
+      ignore:
+        - node_modules
+        - package-lock.json
+    requires:
+      - name: custloyal_vs-service-uaa
+      - name: custloyal_vs-service-db
+  - name: custloyal_vs-srv
+    type: nodejs
+    path: gen/srv
+    parameters:
+      memory: 256MB
+    provides:
+      - name: srv-api
+        properties:
+          srv-url: ${default-url}
+    build-parameters:
+      builder: npm
+      ignore:
+        - node_modules
+        - package-lock.json
+    requires:
+      - name: custloyal_vs-service-uaa
+      - name: custloyal_vs-service-db
+      - name: custloyal_vs-service-destination
+      - name: custloyal_vs-service-metadata
+      - name: custloyal_vs-service-connectivity
+      - name: custloyal_vs-service-logs
+  - name: custloyal_vs-aux-destinations
+    type: com.sap.application.content
+    parameters:
+      content:
+        subaccount:
+          existing_destinations_policy: update
+          destinations:
+            - Authentication: OAuth2UserTokenExchange
+              Name: custloyal_vs-service-uaa
+              ServiceInstanceName: custloyal_vs-uaa
+              ServiceKeyName: custloyal_vs-uaa-key
+              sap.cloud.service: lcap.custloyal_vs
+            - Authentication: OAuth2UserTokenExchange
+              Name: custloyal_vs-app-srv
+              TokenServiceInstanceName: custloyal_vs-uaa
+              TokenServiceKeyName: custloyal_vs-uaa-key
+              URL: ~{srv-api/srv-url}
+              sap.cloud.service: lcap.custloyal_vs
+            - Name: custloyal_vs-service-html5-apps-repo-host
+              ServiceInstanceName: custloyal_vs-html5-apps-repo-host
+              ServiceKeyName: custloyal_vs-html5-apps-repo-host-key
+              sap.cloud.service: lcap.custloyal_vs
+            - Authentication: OAuth2UserTokenExchange
+              Name: custloyal_vs-loyaltyProgramSrv
+              TokenServiceInstanceName: custloyal_vs-uaa
+              TokenServiceKeyName: custloyal_vs-uaa-key
+              URL: ~{srv-api/srv-url}/service/loyaltyProgram
+              sap.cloud.service: lcap.custloyal_vs
+              sap.applicationdevelopment.actions.enabled: false
+              sap.build.usage: CAP
+              sap.processautomation.enabled: false
+              HTML5.DynamicDestination: false
+              WebIDEEnabled: false
+              MobileEnabled: false
+              AppgyverEnabled: false
+    build-parameters:
+      no-source: true
+    requires:
+      - name: custloyal_vs-service-uaa
+        parameters:
+          service-key:
+            name: custloyal_vs-uaa-key
+      - name: srv-api
+      - name: custloyal_vs-service-html5-apps-repo-host
+        parameters:
+          service-key:
+            name: custloyal_vs-html5-apps-repo-host-key
+      - name: custloyal_vs-service-destination
+        parameters:
+          content-target: true
+  - name: custloyal_vs-launchpad
+    type: html5
+    path: build/launchpad
+    build-parameters:
+      builder: custom
+      commands:
+        - npm install
+        - >-
+          npx -p @ui5/cli@^3.0.0 ui5 build --dest dist
+          --include-task=generateManifestBundle
+          --include-task=generateCachebusterInfo
+        - bash -c "cd dist && npx bestzip ../../../build/dist/launchpad.zip *"
+        - rm -rf dist
+      _artifactName: launchpad.zip
+      supported-platforms: []
+      build-result: ../../build/dist
+  - name: custloyal_vs-aux-ui-deployer
+    type: com.sap.application.content
+    path: build/ui-deployer
+    build-parameters:
+      build-result: resources
+      requires:
+        - name: custloyal_vs-custloyalvs.Customers
+          artifacts:
+            - custloyalvsCustomers.zip
+          target-path: resources
+        - name: custloyal_vs-custloyalvs.Purchases
+          artifacts:
+            - custloyalvsPurchases.zip
+          target-path: resources
+        - name: custloyal_vs-custloyalvs.Redemptions
+          artifacts:
+            - custloyalvsRedemptions.zip
+          target-path: resources
+        - name: custloyal_vs-launchpad
+          artifacts:
+            - launchpad.zip
+          target-path: resources
+    requires:
+      - name: custloyal_vs-service-html5-apps-repo-host
+        parameters:
+          content-target: true
+resources:
+  - type: org.cloudfoundry.managed-service
+    name: custloyal_vs-service-uaa
+    parameters:
+      service: xsuaa
+      service-plan: application
+      service-name: custloyal_vs-uaa
+      path: xs-security.json
+      config:
+        oauth2-configuration:
+          redirect-uris:
+            - https://*.${default-domain}/login/*
+        xsappname: custloyal_vs-${space}
+        role-collections: []
+  - type: org.cloudfoundry.managed-service
+    name: custloyal_vs-service-db
+    parameters:
+      service: hana
+      service-plan: hdi-shared
+      service-name: custloyal_vs-db
+  - type: org.cloudfoundry.managed-service
+    name: custloyal_vs-service-destination
+    parameters:
+      service: destination
+      service-plan: lite
+      service-name: custloyal_vs-destination
+      config:
+        HTML5Runtime_enabled: true
+        version: 1.0.0
+  - type: org.cloudfoundry.user-provided-service
+    name: custloyal_vs-service-metadata
+    parameters:
+      service: metadata
+      service-plan: standard
+      service-name: custloyal_vs-metadata
+      config:
+        default-domain: ${default-domain}
+  - type: org.cloudfoundry.managed-service
+    name: custloyal_vs-service-connectivity
+    parameters:
+      service: connectivity
+      service-plan: lite
+      service-name: custloyal_vs-connectivity
+  - type: org.cloudfoundry.managed-service
+    name: custloyal_vs-service-logs
+    parameters:
+      service: application-logs
+      service-plan: lite
+      service-name: custloyal_vs-logs
+  - type: org.cloudfoundry.managed-service
+    name: custloyal_vs-service-html5-apps-repo-host
+    parameters:
+      service: html5-apps-repo
+      service-plan: app-host
+      service-name: custloyal_vs-html5-apps-repo-host

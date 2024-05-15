@@ -1,0 +1,11 @@
+ID;name;email;customerNumber;totalPurchaseValue;totalRewardPoints;totalRedeemedRewardPoints
+8484093e-1a82-447c-9619-b96c33ad86c3;John Doe;johndoe@example.com;1234567;5000;400;100
+4e25f170-0efe-49f8-96ee-712b64f81ddf;Jane Smith;janesmith@example.com;2345678;8000;600;200
+0257f447-be08-459d-b804-4902d0a0c1f1;Michael Johnson;michaeljohnson@example.com;3456789;7500;600;150
+3e8953b0-453d-4043-8fa9-d7221ca06dfb;Emily Davis;emilydavis@example.com;4567890;2000;150;50
+b09bc2f5-636a-401b-acd1-3a52701c5461;David Wilson;davidwilson@example.com;5678901;3000;200;100
+30077058-7ccc-4793-ae36-94c5cc65fbbd;Alice Brown;alicebrown@example.com;6789012;3300;250;80
+ed5c9c6b-3fb7-4f17-b45a-5fc855ecaef6;Robert Miller;robertmiller@example.com;7890123;8500;650;200
+bf8a5d9d-cc91-45ce-ac08-28033bb8c711;Mary Taylor;marytaylor@example.com;8901234;8000;600;200
+2bebbf2b-af87-4d30-ac0d-b233f9dce181;James Anderson;jamesanderson@example.com;9012345;8400;600;240
+d76fd8bc-f37f-4b07-b82b-c14ea15e83b2;Patricia Thomas;patriciathomas@example.com;0123456;2600;200;60

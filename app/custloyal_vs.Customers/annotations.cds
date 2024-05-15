@@ -1,0 +1,1 @@
+using loyaltyProgramSrv as service from '../../srv/service';

@@ -1,0 +1,2 @@
+sap.ui.require(["sap/fe/test/JourneyRunner","custloyalvs/Redemptions/test/integration/FirstJourney","custloyalvs/Redemptions/test/integration/pages/RedemptionsList","custloyalvs/Redemptions/test/integration/pages/RedemptionsObjectPage"],function(e,t,s,n){"use strict";var e=new e({launchUrl:sap.ui.require.toUrl("custloyalvs/Redemptions")+"/index.html"});e.run({pages:{onTheRedemptionsList:s,onTheRedemptionsObjectPage:n}},t.run)});
+//# sourceMappingURL=opaTests.qunit.js.map

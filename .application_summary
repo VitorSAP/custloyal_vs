@@ -1,0 +1,5 @@
+{
+  "ProjectOverviewURL": "https://572aeb75trial.launchpad.cfapps.us10.hana.ondemand.com/lcapcustloyal_vs.custloyal_vsLaunchpad-1.0.0",
+  "DeployedUTCTime": "2024-05-15T12:05:43.342Z",
+  "ApplicationLogURL": "https://logs.cf.us10-001.hana.ondemand.com/app/dashboards#/view/Overview?_g=(filters:!((query:(match_phrase:(component_name:custloyal_vs-srv)))))"
+}
