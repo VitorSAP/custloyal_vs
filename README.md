@@ -1,25 +1,13 @@
+# Customer Loyalty Program Application
+
+This app is built following https://github.com/SAP-samples/build-code-connect-2024/ up to step 7 and can be used as reference or as starting point for the following steps.
+
 # Getting Started
 
-Welcome to your new project.
+In the SAP Build Lobby:
+1) Press "clone"
+2) Select "Full Stack Application"
+3) Enter this repository URL (https://github.com/VitorSAP/custloyal_vs.git)
+4) Choose a name for your project and press OK
 
-It contains these folders and files, following our recommended project layout:
-
-File or Folder | Purpose
----------|----------
-`app/` | content for UI frontends goes here
-`db/` | your domain models and data go here
-`srv/` | your service models and code go here
-`package.json` | project metadata and configuration
-`readme.md` | this getting started guide
-
-
-## Next Steps
-
-- Open a new terminal and run `cds watch`
-- (in VS Code simply choose _**Terminal** > Run Task > cds watch_)
-- Start adding content, for example, a [db/schema.cds](db/schema.cds).
-
-
-## Learn More
-
-Learn more at https://cap.cloud.sap/docs/get-started/.
+Wait for the cloning and initialization to be finished and your application will open in SAP Business Application Studio.
